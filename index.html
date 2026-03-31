@@ -28,7 +28,6 @@ font-size: 15px;
 
 #gen { background: #6a5acd; }
 #curse { background: #2b2b55; }
-#legend { background: #ff8c00; }
 
 .box {
 margin-top: 25px;
@@ -53,13 +52,11 @@ backdrop-filter: blur(6px);
 
 <button id="gen" onclick="generate()">Generate Life</button>
 <button id="curse" onclick="addCurse()">Add Curse 🌑</button>
-<button id="legend" onclick="makeLegend()">Make Legendary ⚔️</button>
 
 <div class="box" id="output">Generate a character...</div>
 
 <script>
 
-// ---------- CORE HELPERS ----------
 function pick(arr) {
 return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -73,7 +70,6 @@ rand -= item.weight;
 }
 }
 
-// ---------- NAME GENERATION ----------
 const nameStart = ["Ery", "Kael", "Ly", "Ara", "Dra", "Vor", "Zyn", "Mor", "Sel", "Nyx"];
 const nameEnd = ["dor", "thorn", "shade", "vane", "mir", "ion", "rael", "strix"];
 
@@ -81,7 +77,6 @@ function generateName() {
 return pick(nameStart) + pick(nameEnd) + " " + pick(nameStart) + pick(nameEnd);
 }
 
-// ---------- DATA WITH RARITY ----------
 const races = [
 { value: "human", weight: 40 },
 { value: "elf", weight: 25 },
@@ -101,7 +96,6 @@ const factions = [
 "Void Empire", "Stormborn Clan", "Forgotten Council"
 ];
 
-// ---------- COMBINED GENERATION ----------
 const destinyCore = [
 "destroy the world", "save the world", "rewrite reality",
 "become a god", "break time itself"
@@ -133,15 +127,12 @@ const starts = [
 "discovers they are already dead"
 ];
 
-// ---------- EXTRA DEPTH ----------
 const traits = ["ruthless", "melancholic", "unstable", "charismatic", "obsessive"];
 const weapons = ["cursed blade", "void staff", "living armor", "ancient relic"];
 const companions = ["spirit wolf", "ghost child", "fallen angel", "AI construct"];
 
-// ---------- STATE ----------
 let character = {};
 
-// ---------- GENERATE ----------
 function generate() {
 character = {
 name: generateName(),
@@ -160,7 +151,6 @@ rarity: calculateRarity()
 render();
 }
 
-// ---------- RARITY SYSTEM ----------
 function calculateRarity() {
 let score = Math.random();
 if (score > 0.95) return "LEGENDARY";
@@ -169,7 +159,6 @@ if (score > 0.4) return "RARE";
 return "COMMON";
 }
 
-// ---------- CURSE ----------
 function addCurse() {
 if (!character.name) return;
 
@@ -184,18 +173,6 @@ character.curse = pick(curses);
 render();
 }
 
-// ---------- LEGEND ----------
-function makeLegend() {
-if (!character.name) return;
-
-character.rarity = "LEGENDARY";
-character.destiny = "BECOMES A MYTH THAT REWRITES REALITY";
-character.faction = "BEYOND ALL FACTIONS";
-
-render();
-}
-
-// ---------- RENDER ----------
 function render() {
 document.getElementById("output").innerHTML = `
 <div><span class="tag">NAME:</span> ${character.name}</div>
