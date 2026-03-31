@@ -65,7 +65,7 @@ button:hover { opacity: 0.85; }
 <div class="box" id="storyOutput"></div>
 
 <!-- Квиз -->
-<button id="quizBtn" onclick="startQuiz()">Who Are You in Fantasy Characters?</button>
+<button id="quizBtn" onclick="startQuiz()">Who Are You in Fantasy world?</button>
 <div class="box quizBox" id="quizBox" style="display:none;">
   <div id="quizContent"></div>
 </div>
@@ -177,18 +177,57 @@ function generateStoryName() {
 
 // ---------------- Fantasy Quiz ----------------
 const quizQuestions = [
-  { q: "You find a mysterious artifact. What do you do?", a: ["Study it carefully", "Sell it for profit", "Use it to help others"], type: ["wizard","trickster","hero"] },
-  { q: "A dangerous enemy blocks your path. Your choice?", a: ["Face them head-on", "Outsmart them", "Cast a powerful spell"], type: ["hero","trickster","wizard"] },
-  { q: "Pick a companion:", a: ["Dragon", "Rogue thief", "Wise old mentor"], type: ["hero","trickster","wizard"] },
-  { q: "Ideal home:", a: ["Castle", "Hidden lair", "Tower of magic"], type: ["hero","trickster","wizard"] },
-  { q: "Method to achieve goals:", a: ["Valor", "Cunning", "Magic"], type: ["hero","trickster","wizard"] },
-  { q: "Pick a magical element:", a: ["Fire", "Illusion", "Light"], type: ["hero","trickster","wizard"] },
-  { q: "Which describes you?", a: ["Brave", "Clever", "Wise"], type: ["hero","trickster","wizard"] },
-  { q: "Mode of travel?", a: ["Horse", "Secret tunnels", "Portal magic"], type: ["hero","trickster","wizard"] },
-  { q: "If ruler, what do you prioritize?", a: ["Justice", "Power", "Knowledge"], type: ["hero","trickster","wizard"] },
-  { q: "How handle betrayal?", a: ["Forgive", "Revenge", "Strategy"], type: ["hero","trickster","wizard"] }
+  { 
+    q: "You discover a threat to the realm. What do you do?", 
+    a: ["Lead an army to defend it", "Strategize from afar", "Use wit to manipulate events", "Rally people with charisma", "Hunt the enemy yourself", "Scout silently and strike"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "A companion is in danger. How do you react?", 
+    a: ["Charge in to save them", "Guide them with wisdom", "Talk your way out", "Inspire them to survive", "Take the risk personally", "Use speed and skill to intervene"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "Which describes your leadership style?", 
+    a: ["Lead by example", "Lead with knowledge", "Lead with cleverness", "Lead with passion", "Lead by taking action yourself", "Lead with precision"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "Pick a weapon:", 
+    a: ["Sword", "Staff", "Dagger", "Dragons", "Silver sword", "Bow"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "Your preferred companion in battle:", 
+    a: ["Trusted warriors", "Mystical allies", "Informants and spies", "Dragons and armies", "Mutants and monsters", "Elven archers"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "How do you handle betrayal?", 
+    a: ["Face it honorably", "Outsmart the betrayer", "Use it for advantage", "Use it to strengthen your claim", "Hunt them down", "Ignore and strike precisely"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "Which element attracts you most?", 
+    a: ["Earth/Strength", "Light/Wisdom", "Air/Cunning", "Fire/Passion", "Silver/Nature", "Wind/Agility"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "Your ideal home:", 
+    a: ["Fortified castle", "Tower of knowledge", "Hidden chambers", "Palace or city", "Remote wilderness", "Forest or high mountains"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "How do you solve problems?", 
+    a: ["Direct action", "Planning and foresight", "Manipulation and wit", "Inspire others", "Use personal skill", "Swift, precise moves"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  },
+  { 
+    q: "Which quality do you value most?", 
+    a: ["Courage", "Wisdom", "Intelligence", "Charisma", "Skill", "Agility"], 
+    type: ["hero","wizard","trickster","queen","witcher","elf"] 
+  }
 ];
-
 const fantasyCharacters = {
   hero: { 
     name: "Aragorn", 
