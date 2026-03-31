@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fantasy Lore</title>
+<title>Advanced Living Lore Generator + Fantasy Quiz</title>
 
 <style>
 body {
@@ -22,7 +22,7 @@ button {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  color: black;
+  color: white;
   font-size: 15px;
   transition: 0.2s;
 }
@@ -30,7 +30,7 @@ button {
 button:hover { opacity: 0.85; }
 
 #gen { background: #6a5acd; }
-#curse { background: #2b2b55; }
+#storyNameBtn { background: #8a2be2; }
 #quizBtn { background: #5a9bd8; }
 
 .box {
@@ -56,34 +56,46 @@ button:hover { opacity: 0.85; }
 
 <h1>🌙 Advanced Living Lore Generator</h1>
 
-<button id="gen" onclick="generate()">Generate Life</button>
-<button id="curse" onclick="addCurse()">Add Curse 🌑</button>
-<button id="quizBtn" onclick="startQuiz()">🧙‍♂️ Take Fantasy Character Quiz</button>
-
+<!-- Генератор персонажа -->
+<button id="gen" onclick="toggleGenerator()">Generate Character</button>
 <div class="box" id="output">Generate a character...</div>
 
+<!-- Генератор названия рассказа -->
+<button id="storyNameBtn" onclick="generateStoryName()">Generate Story Name</button>
+<div class="box" id="storyOutput"></div>
+
+<!-- Квиз -->
+<button id="quizBtn" onclick="startQuiz()">🧙‍♂️ Take Fantasy Character Quiz</button>
 <div class="box quizBox" id="quizBox" style="display:none;">
   <div id="quizContent"></div>
 </div>
 
 <script>
-// ---------------- Character Generator (unchanged) ----------------
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+// ---------------- Character Generator ----------------
+let characterVisible = false;
+let character = {};
 
+function toggleGenerator() {
+  const quizBox = document.getElementById("quizBox");
+  if(quizBox.style.display === "block") quizBox.style.display = "none"; // закрываем квиз
+  characterVisible = !characterVisible;
+  generate();
+}
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function weightedPick(table) {
   const total = table.reduce((sum, item) => sum + item.weight, 0);
   let rand = Math.random() * total;
-  for (let item of table) {
-    if (rand < item.weight) return item.value;
-    rand -= item.weight;
-  }
+  for (let item of table) { if (rand < item.weight) return item.value; rand -= item.weight; }
 }
 
+// Имя персонажа
 const nameStart = ["Ery", "Kael", "Ly", "Ara", "Dra", "Vor", "Zyn", "Mor", "Sel", "Nyx"];
 const nameEnd = ["dor", "thorn", "shade", "vane", "mir", "ion", "rael", "strix"];
 
 function generateName() { return pick(nameStart) + pick(nameEnd) + " " + pick(nameStart) + pick(nameEnd); }
 
+// Категории
 const races = [
   { value: "human", weight: 40 },
   { value: "elf", weight: 25 },
@@ -102,8 +114,7 @@ const starts = ["wakes up with no memory","hears a voice from beyond reality","i
 const traits = ["ruthless", "melancholic", "unstable", "charismatic", "obsessive"];
 const weapons = ["cursed blade", "void staff", "living armor", "ancient relic"];
 const companions = ["spirit wolf", "ghost child", "fallen angel", "AI construct"];
-
-let character = {};
+const curses = ["Their shadow moves on its own.","They forget loved ones daily.","Reality bends around them.","They exist in constant déjà vu."];
 
 function generateDestiny() { return "will " + pick(destinyCore) + " " + pick(destinyTwist); }
 
@@ -119,6 +130,7 @@ function generate() {
     trait: pick(traits),
     weapon: pick(weapons),
     companion: pick(companions),
+    curse: pick(curses),
     rarity: calculateRarity()
   };
   render();
@@ -130,13 +142,6 @@ function calculateRarity() {
   if (score > 0.75) return "EPIC";
   if (score > 0.4) return "RARE";
   return "COMMON";
-}
-
-function addCurse() {
-  if (!character.name) return;
-  const curses = ["Their shadow moves on its own.","They forget loved ones daily.","Reality bends around them.","They exist in constant déjà vu."];
-  character.curse = pick(curses);
-  render();
 }
 
 function render() {
@@ -154,42 +159,52 @@ function render() {
     <br>
     <div><span class="tag">START:</span> ${character.start}</div>
     <div><span class="tag">SECRET:</span> ${character.secret}</div>
-    ${character.curse ? "<br><div><span class='tag'>CURSE:</span> " + character.curse + "</div>" : ""}
+    <div><span class="tag">CURSE:</span> ${character.curse}</div>
     <br>
     <div><span class="tag">DESTINY:</span> ${character.destiny}</div>
   `;
 }
 
-// ---------------- Fantasy Quiz with Personality Mapping ----------------
+// ---------------- Story Name Generator ----------------
+const storyStart = ["Shadow of", "Rise of", "The Legend of", "Curse of", "The Secret of", "Chronicles of"];
+const storyMiddle = ["the Forgotten", "the Lost Kingdom", "the Dark Mage", "the Brave Warrior", "the Silent Forest", "the Eternal Flame"];
+function generateStoryName() {
+  const title = pick(storyStart) + " " + pick(storyMiddle);
+  document.getElementById("storyOutput").innerHTML = `<h3>Story Title:</h3><p>${title}</p>`;
+}
+
+// ---------------- Fantasy Quiz ----------------
 const quizQuestions = [
-  { q: "What would you do in a dangerous dungeon?", a: ["Fight bravely", "Sneak around", "Use magic"], type: ["hero","trickster","wizard"] },
-  { q: "Pick a weapon", a: ["Sword", "Bow", "Staff"], type: ["hero","trickster","wizard"] },
-  { q: "Choose a companion", a: ["Wolf", "Fairy", "Dragon"], type: ["trickster","wizard","hero"] },
-  { q: "Your preferred environment", a: ["Forest", "Castle", "Void"], type: ["trickster","hero","wizard"] },
-  { q: "Favorite trait", a: ["Courageous", "Clever", "Mysterious"], type: ["hero","trickster","wizard"] },
-  { q: "Your goal", a: ["Save the world", "Gain power", "Discover secrets"], type: ["hero","wizard","trickster"] },
-  { q: "Pick a color", a: ["Red", "Blue", "Black"], type: ["hero","wizard","trickster"] },
-  { q: "Choose a mode of travel", a: ["Horse", "Portal", "Flying beast"], type: ["hero","wizard","trickster"] },
-  { q: "Preferred magic", a: ["Fire", "Illusion", "Necromancy"], type: ["hero","trickster","wizard"] },
-  { q: "How do you face enemies?", a: ["Direct attack", "Trickery", "Mind control"], type: ["hero","trickster","wizard"] }
+  { q: "You find a mysterious artifact. What do you do?", a: ["Study it carefully", "Sell it for profit", "Use it to help others"], type: ["wizard","trickster","hero"] },
+  { q: "A dangerous enemy blocks your path. Your choice?", a: ["Face them head-on", "Outsmart them", "Cast a powerful spell"], type: ["hero","trickster","wizard"] },
+  { q: "Pick a companion:", a: ["Dragon", "Rogue thief", "Wise old mentor"], type: ["hero","trickster","wizard"] },
+  { q: "Ideal home:", a: ["Castle", "Hidden lair", "Tower of magic"], type: ["hero","trickster","wizard"] },
+  { q: "Method to achieve goals:", a: ["Valor", "Cunning", "Magic"], type: ["hero","trickster","wizard"] },
+  { q: "Pick a magical element:", a: ["Fire", "Illusion", "Light"], type: ["hero","trickster","wizard"] },
+  { q: "Which describes you?", a: ["Brave", "Clever", "Wise"], type: ["hero","trickster","wizard"] },
+  { q: "Mode of travel?", a: ["Horse", "Secret tunnels", "Portal magic"], type: ["hero","trickster","wizard"] },
+  { q: "If ruler, what do you prioritize?", a: ["Justice", "Power", "Knowledge"], type: ["hero","trickster","wizard"] },
+  { q: "How handle betrayal?", a: ["Forgive", "Revenge", "Strategy"], type: ["hero","trickster","wizard"] }
 ];
 
 const fantasyCharacters = {
-  hero: { name: "Aragorn", desc: "A brave ranger destined to unite kingdoms and fight evil." },
-  wizard: { name: "Gandalf", desc: "A wise wizard guiding heroes and wielding powerful magic." },
-  trickster: { name: "Tyrion Lannister", desc: "A clever strategist who survives through wit and intelligence." },
-  queen: { name: "Daenerys Targaryen", desc: "A determined queen seeking to reclaim her throne and change the world." },
-  witcher: { name: "Geralt of Rivia", desc: "A skilled monster hunter navigating a harsh and dangerous world." },
-  elf: { name: "Legolas", desc: "An agile elf archer with unmatched precision and grace." }
+  hero: { name: "Aragorn", universe: "Lord of the Rings", desc: "Brave ranger destined to unite kingdoms and fight evil." },
+  wizard: { name: "Gandalf", universe: "Lord of the Rings", desc: "Wise wizard guiding heroes and wielding powerful magic." },
+  trickster: { name: "Tyrion Lannister", universe: "Game of Thrones", desc: "Clever strategist who survives through wit and intelligence." },
+  queen: { name: "Daenerys Targaryen", universe: "Game of Thrones", desc: "Determined queen seeking to reclaim her throne and change the world." },
+  witcher: { name: "Geralt of Rivia", universe: "The Witcher", desc: "Skilled monster hunter navigating a harsh and dangerous world." },
+  elf: { name: "Legolas", universe: "Lord of the Rings", desc: "Agile elf archer with unmatched precision and grace." }
 };
 
 let currentQuestion = 0;
 let scores = { hero:0, wizard:0, trickster:0, queen:0, witcher:0, elf:0 };
 
 function startQuiz() {
+  document.getElementById("output").style.display = "none"; // скрываем генератор
+  document.getElementById("storyOutput").style.display = "none"; // скрываем название
+  document.getElementById("quizBox").style.display = "block";
   currentQuestion = 0;
   for (let k in scores) scores[k] = 0; // reset
-  document.getElementById("quizBox").style.display = "block";
   showQuestion();
 }
 
@@ -198,7 +213,7 @@ function showQuestion() {
   const q = quizQuestions[currentQuestion];
   let html = `<h3>Q${currentQuestion+1}: ${q.q}</h3>`;
   q.a.forEach((ans, idx) => {
-    html += `<button style="background: linear-gradient(135deg, #6a5acd, #5a9bd8)" onclick="answer('${q.type[idx]}')">${ans}</button>`;
+    html += `<button onclick="answer('${q.type[idx]}')">${ans}</button>`;
   });
   document.getElementById("quizContent").innerHTML = html;
 }
@@ -211,15 +226,20 @@ function answer(type) {
 
 function showResult() {
   let maxType = Object.keys(scores).reduce((a,b) => scores[a]>=scores[b]?a:b);
-  // если нужен вариант только из конкретного списка
-  let validChars = ["hero","wizard","trickster","queen","witcher","elf"];
-  if(!validChars.includes(maxType)) maxType = "hero";
   const character = fantasyCharacters[maxType];
   document.getElementById("quizContent").innerHTML = `
     <h2>You are like <span style="color:gold">${character.name}</span>!</h2>
+    <h4>Universe: ${character.universe}</h4>
     <p>${character.desc}</p>
-    <button onclick="startQuiz()">Try Again</button>
+    <p>Type: ${maxType}</p>
+    <button onclick="restartQuiz()">Try Again</button>
   `;
+}
+
+function restartQuiz() {
+  document.getElementById("quizBox").style.display = "none";
+  document.getElementById("output").style.display = "block";
+  document.getElementById("storyOutput").style.display = "block";
 }
 </script>
 
