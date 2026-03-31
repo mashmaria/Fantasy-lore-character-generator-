@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Advanced Living Lore Generator + Fantasy Quiz</title>
+<title>Fantasy World</title>
 
 <style>
 body {
@@ -54,7 +54,7 @@ button:hover { opacity: 0.85; }
 </head>
 <body>
 
-<h1>🌙 Advanced Living Lore Generator</h1>
+<h1>Fantasy World</h1>
 
 <!-- Генератор персонажа -->
 <button id="gen" onclick="toggleGenerator()">Generate Character</button>
@@ -65,7 +65,7 @@ button:hover { opacity: 0.85; }
 <div class="box" id="storyOutput"></div>
 
 <!-- Квиз -->
-<button id="quizBtn" onclick="startQuiz()">🧙‍♂️ Take Fantasy Character Quiz</button>
+<button id="quizBtn" onclick="startQuiz()">Who Are You in Fantasy Characters?</button>
 <div class="box quizBox" id="quizBox" style="display:none;">
   <div id="quizContent"></div>
 </div>
@@ -76,9 +76,8 @@ let characterVisible = false;
 let character = {};
 
 function toggleGenerator() {
-  const quizBox = document.getElementById("quizBox");
-  if(quizBox.style.display === "block") quizBox.style.display = "none"; // закрываем квиз
-  characterVisible = !characterVisible;
+  closeQuiz(); // закрываем квиз при генераторе
+  characterVisible = true;
   generate();
 }
 
@@ -95,7 +94,7 @@ const nameEnd = ["dor", "thorn", "shade", "vane", "mir", "ion", "rael", "strix"]
 
 function generateName() { return pick(nameStart) + pick(nameEnd) + " " + pick(nameStart) + pick(nameEnd); }
 
-// Категории
+// Категории персонажа
 const races = [
   { value: "human", weight: 40 },
   { value: "elf", weight: 25 },
@@ -104,7 +103,6 @@ const races = [
   { value: "dragon-blooded", weight: 7 },
   { value: "god-descended", weight: 3 }
 ];
-
 const roles = ["wanderer", "exiled prince", "artifact hunter","fallen hero", "dimension walker", "void assassin"];
 const factions = ["Order of Light", "Crimson Cult", "Silent Monks","Void Empire", "Stormborn Clan", "Forgotten Council"];
 const destinyCore = ["destroy the world", "save the world", "rewrite reality","become a god", "break time itself"];
@@ -133,7 +131,7 @@ function generate() {
     curse: pick(curses),
     rarity: calculateRarity()
   };
-  render();
+  renderCharacter();
 }
 
 function calculateRarity() {
@@ -144,7 +142,8 @@ function calculateRarity() {
   return "COMMON";
 }
 
-function render() {
+function renderCharacter() {
+  document.getElementById("output").style.display = "block";
   document.getElementById("output").innerHTML = `
     <div><span class="tag">NAME:</span> ${character.name}</div>
     <div><span class="tag">RARITY:</span> <span class="${character.rarity === 'LEGENDARY' ? 'legendary' : ''}">${character.rarity}</span></div>
@@ -166,10 +165,13 @@ function render() {
 }
 
 // ---------------- Story Name Generator ----------------
-const storyStart = ["Shadow of", "Rise of", "The Legend of", "Curse of", "The Secret of", "Chronicles of"];
-const storyMiddle = ["the Forgotten", "the Lost Kingdom", "the Dark Mage", "the Brave Warrior", "the Silent Forest", "the Eternal Flame"];
+const storyStart = ["Shadow of", "Rise of", "The Legend of", "Curse of", "The Secret of", "Chronicles of","Whispers of","Blood of","Journey of","The Last","Dawn of","The Fall of","Kingdom of","The Hunt for","Echoes of","Prophecy of","The War of","Tales of","Siege of","The Blade of"];
+const storyMiddle = ["the Forgotten","the Lost Kingdom","the Dark Mage","the Brave Warrior","the Silent Forest","the Eternal Flame","the Cursed Prince","the Hidden Realm","the Shadow King","the Ancient One","the Ice Queen","the Wandering Knight","the Feral Beast","the Golden City","the Broken Sword","the Silver Phoenix","the Black Tower","the Fireborn","the Night Hunter","the Mystic Orb"];
+
 function generateStoryName() {
+  closeQuiz(); // закрываем квиз
   const title = pick(storyStart) + " " + pick(storyMiddle);
+  document.getElementById("storyOutput").style.display = "block";
   document.getElementById("storyOutput").innerHTML = `<h3>Story Title:</h3><p>${title}</p>`;
 }
 
@@ -200,8 +202,7 @@ let currentQuestion = 0;
 let scores = { hero:0, wizard:0, trickster:0, queen:0, witcher:0, elf:0 };
 
 function startQuiz() {
-  document.getElementById("output").style.display = "none"; // скрываем генератор
-  document.getElementById("storyOutput").style.display = "none"; // скрываем название
+  closeGenerators(); // закрываем генераторы
   document.getElementById("quizBox").style.display = "block";
   currentQuestion = 0;
   for (let k in scores) scores[k] = 0; // reset
@@ -236,10 +237,12 @@ function showResult() {
   `;
 }
 
-function restartQuiz() {
-  document.getElementById("quizBox").style.display = "none";
-  document.getElementById("output").style.display = "block";
-  document.getElementById("storyOutput").style.display = "block";
+function restartQuiz() { startQuiz(); }
+
+function closeQuiz() { document.getElementById("quizBox").style.display = "none"; }
+function closeGenerators() { 
+  document.getElementById("output").style.display = "none"; 
+  document.getElementById("storyOutput").style.display = "none"; 
 }
 </script>
 
