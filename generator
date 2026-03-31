@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Living Lore Generator</title>
+
+<style>
+body {
+margin: 0;
+font-family: Arial;
+background: radial-gradient(circle at top, #141432, #050510);
+color: white;
+text-align: center;
+padding: 40px;
+}
+
+h1 { font-size: 32px; }
+
+button {
+margin: 6px;
+padding: 12px 16px;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+color: white;
+font-size: 15px;
+}
+
+#gen { background: #6a5acd; }
+#curse { background: #2b2b55; }
+#legend { background: #ff8c00; }
+
+.box {
+margin-top: 25px;
+background: rgba(255,255,255,0.05);
+padding: 20px;
+border-radius: 15px;
+max-width: 700px;
+margin-left: auto;
+margin-right: auto;
+text-align: left;
+backdrop-filter: blur(6px);
+}
+
+.tag { color: #c9b6ff; font-weight: bold; }
+.legendary { color: gold; }
+</style>
+</head>
+
+<body>
+
+<h1>🌙 Advanced Living Lore Generator</h1>
+
+<button id="gen" onclick="generate()">Generate Life</button>
+<button id="curse" onclick="addCurse()">Add Curse 🌑</button>
+<button id="legend" onclick="makeLegend()">Make Legendary ⚔️</button>
+
+<div class="box" id="output">Generate a character...</div>
+
+<script>
+
+// ---------- CORE HELPERS ----------
+function pick(arr) {
+return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function weightedPick(table) {
+const total = table.reduce((sum, item) => sum + item.weight, 0);
+let rand = Math.random() * total;
+for (let item of table) {
+if (rand < item.weight) return item.value;
+rand -= item.weight;
+}
+}
+
+// ---------- NAME GENERATION ----------
+const nameStart = ["Ery", "Kael", "Ly", "Ara", "Dra", "Vor", "Zyn", "Mor", "Sel", "Nyx"];
+const nameEnd = ["dor", "thorn", "shade", "vane", "mir", "ion", "rael", "strix"];
+
+function generateName() {
+return pick(nameStart) + pick(nameEnd) + " " + pick(nameStart) + pick(nameEnd);
+}
+
+// ---------- DATA WITH RARITY ----------
+const races = [
+{ value: "human", weight: 40 },
+{ value: "elf", weight: 25 },
+{ value: "shadow-born", weight: 15 },
+{ value: "void-touched", weight: 10 },
+{ value: "dragon-blooded", weight: 7 },
+{ value: "god-descended", weight: 3 }
+];
+
+const roles = [
+"wanderer", "exiled prince", "artifact hunter",
+"fallen hero", "dimension walker", "void assassin"
+];
+
+const factions = [
+"Order of Light", "Crimson Cult", "Silent Monks",
+"Void Empire", "Stormborn Clan", "Forgotten Council"
+];
+
+// ---------- COMBINED GENERATION ----------
+const destinyCore = [
+"destroy the world", "save the world", "rewrite reality",
+"become a god", "break time itself"
+];
+
+const destinyTwist = [
+"at a terrible cost", "but lose their identity",
+"and erase all history", "while dooming someone they love",
+"but never be remembered"
+];
+
+function generateDestiny() {
+return "will " + pick(destinyCore) + " " + pick(destinyTwist);
+}
+
+const secrets = [
+"is not truly alive",
+"exists in multiple timelines",
+"has already died once",
+"is controlled by an unseen entity",
+"is their own ancestor"
+];
+
+const starts = [
+"wakes up with no memory",
+"hears a voice from beyond reality",
+"is hunted by unknown forces",
+"breaks a forbidden artifact",
+"discovers they are already dead"
+];
+
+// ---------- EXTRA DEPTH ----------
+const traits = ["ruthless", "melancholic", "unstable", "charismatic", "obsessive"];
+const weapons = ["cursed blade", "void staff", "living armor", "ancient relic"];
+const companions = ["spirit wolf", "ghost child", "fallen angel", "AI construct"];
+
+// ---------- STATE ----------
+let character = {};
+
+// ---------- GENERATE ----------
+function generate() {
+character = {
+name: generateName(),
+race: weightedPick(races),
+role: pick(roles),
+faction: pick(factions),
+secret: pick(secrets),
+destiny: generateDestiny(),
+start: pick(starts),
+trait: pick(traits),
+weapon: pick(weapons),
+companion: pick(companions),
+rarity: calculateRarity()
+};
+
+render();
+}
+
+// ---------- RARITY SYSTEM ----------
+function calculateRarity() {
+let score = Math.random();
+if (score > 0.95) return "LEGENDARY";
+if (score > 0.75) return "EPIC";
+if (score > 0.4) return "RARE";
+return "COMMON";
+}
+
+// ---------- CURSE ----------
+function addCurse() {
+if (!character.name) return;
+
+const curses = [
+"Their shadow moves on its own.",
+"They forget loved ones daily.",
+"Reality bends around them.",
+"They exist in constant déjà vu."
+];
+
+character.curse = pick(curses);
+render();
+}
+
+// ---------- LEGEND ----------
+function makeLegend() {
+if (!character.name) return;
+
+character.rarity = "LEGENDARY";
+character.destiny = "BECOMES A MYTH THAT REWRITES REALITY";
+character.faction = "BEYOND ALL FACTIONS";
+
+render();
+}
+
+// ---------- RENDER ----------
+function render() {
+document.getElementById("output").innerHTML = `
+<div><span class="tag">NAME:</span> ${character.name}</div>
+<div><span class="tag">RARITY:</span> <span class="${character.rarity === 'LEGENDARY' ? 'legendary' : ''}">${character.rarity}</span></div>
+
+<br>
+<div><span class="tag">RACE:</span> ${character.race}</div>
+<div><span class="tag">ROLE:</span> ${character.role}</div>
+<div><span class="tag">TRAIT:</span> ${character.trait}</div>
+
+<br>
+<div><span class="tag">FACTION:</span> ${character.faction}</div>
+<div><span class="tag">COMPANION:</span> ${character.companion}</div>
+<div><span class="tag">WEAPON:</span> ${character.weapon}</div>
+
+<br>
+<div><span class="tag">START:</span> ${character.start}</div>
+<div><span class="tag">SECRET:</span> ${character.secret}</div>
+
+${character.curse ? "<br><div><span class='tag'>CURSE:</span> " + character.curse + "</div>" : ""}
+
+<br>
+<div><span class="tag">DESTINY:</span> ${character.destiny}</div>
+`;
+}
+
+</script>
+
+</body>
+</html>
